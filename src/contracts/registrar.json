@@ -1,0 +1,8 @@
+{
+	"name": "blog-name",
+	"web2_url": "https://example.net",
+	"maintainers": [
+		"ARWEAVE_ADDRESS"
+	],
+	"articles":[]
+}

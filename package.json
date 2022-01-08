@@ -1,0 +1,39 @@
+{
+  "name": "wp-bridge",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "a bridge from WordPress to Arweave",
+  "main": "/src/bin/wp-bridge.js",
+  "bin": {
+    "wp-bridge": "./src/bin/wp-bridge.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parallel-news/wp-bridge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/parallel-news/wp-bridge/issues"
+  },
+  "homepage": "https://github.com/parallel-news/wp-bridge#readme",
+  "keywords": ["wordpress", "storage", "backup", "bridge", "web3"],
+  "author": "charmful0x",
+  "license": "MIT",
+  "dependencies": {
+    "arweave": "^1.10.22",
+    "axios": "^0.24.0",
+    "clui": "^0.3.6",
+    "configstore": "^6.0.0",
+    "figlet": "^1.5.2",
+    "fs": "0.0.1-security",
+    "inquirer": "^8.2.0",
+    "json-beautify": "^1.1.1",
+    "loglevel": "^1.8.0",
+    "redstone-smartweave": "^0.4.10",
+    "smartweave": "^0.4.46",
+    "wpapi": "^1.2.2",
+    "yargs": "^17.3.1"
+  },
+  "devDependencies": {
+    "chalk": "^5.0.0"
+  }
+}
