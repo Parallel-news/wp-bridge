@@ -1,4 +1,3 @@
-import WPAPI from "wpapi";
 import axios from "axios";
 
 // export async function discovery({ site_url } = {}) {
