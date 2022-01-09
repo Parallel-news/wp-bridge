@@ -165,7 +165,7 @@ export async function fetchContent(argv) {
     return;
   }
 
-  const contract = await getConfig("contract");
+  const contract = (await getConfig("contract")).contract;
   let loader = new Spinner(`reading the state of ${contract}`, spinnerStyle);
   loader.start();
   const contractState = await readContract(arweave, contract);
@@ -236,7 +236,7 @@ export async function loadContractState() {
     return;
   }
 
-  const contract_id = await getConfig("contract");
+  const contract_id = (await getConfig("contract")).contract;
   spinner(`loading the state of ${contract_id}`).start();
   const state = await readContractState(contract_id);
   spinner().stop();
