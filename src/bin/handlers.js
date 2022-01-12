@@ -10,6 +10,8 @@ import {
   balanceOf,
   deployContract,
   addArticle,
+  signTransaction,
+  balanceDiffsAfterArchiving,
 } from "../utils/arweave.js";
 import { checkFileExtension, isParsable } from "../utils/types-checking.js";
 import {
@@ -164,10 +166,13 @@ export async function fetchContent(argv) {
     console.log(red("ERROR: please signin to create a smartweave contract"));
     return;
   }
-
+  const transactions_array = [];
   const contract = (await getConfig("contract")).contract;
+  const address = (await getConfig("address")).address;
+
   let loader = new Spinner(`reading the state of ${contract}`, spinnerStyle);
   loader.start();
+
   const contractState = await readContract(arweave, contract);
   const articlesIds = contractState["articles"].map((article) => article.wpaid);
 
@@ -197,8 +202,10 @@ export async function fetchContent(argv) {
   loader.stop();
 
   for (let article of blogContent) {
-    let txid = `dry-running | not transacted`;
-    loader = new Spinner(`archiving article ${article.id}`, spinnerStyle);
+    loader = new Spinner(
+      `creating archive transaction for ${article.id}`,
+      spinnerStyle
+    );
     loader.start();
 
     if (articlesIds.includes(article.id)) {
@@ -211,24 +218,67 @@ export async function fetchContent(argv) {
       continue;
     }
 
-    if (!argv.dryRun) {
-      txid = await addArticle({
-        data: article,
-        contract_id: contract,
-        pk_n: (await loadAccount()).pk,
-      });
-    }
+    const tx = await addArticle({
+      data: article,
+      contract_id: contract,
+      pk_n: (await loadAccount()).pk,
+    });
+
+    transactions_array.push({
+      tx_object: tx,
+      tx_metadata: {
+        slug: article.slug,
+        wpaid: article.id,
+      },
+    });
 
     loader.stop();
+  }
+  const archiveStats = await balanceDiffsAfterArchiving({
+    address,
+    transactions_array,
+  });
 
-    console.log(`---> archived successfully:\n`);
-    console.log(`\t\t\tarticle ID: ${green(article.id)}`);
-    console.log(`\t\t\tarticle slug: ${green(article.slug)}`);
-    console.log(`\t\t\tarchive TXID: ${green(txid)}\n\n`);
+  if (!archiveStats.can_archive) {
+    console.log(
+      red("unsufficient wallet balance, please top-up AR in tour wallet")
+    );
+    process.exit(0);
+  }
+  const balance_before = archiveStats["balance_before"];
+  const balance_after = archiveStats["balance_after"];
+
+  const message = green(
+    `do you really want to archive the database  (y/n)\n\n` +
+      `balance before archiving: ${balance_before} AR\n` +
+      `balance after archiving: ${balance_after} AR\n\n`
+  );
+
+  const inquiry = await inquirer.prompt([
+    {
+      name: "archive",
+      type: "input",
+      message: message,
+    },
+  ]);
+
+  if (inquiry.archive !== "y") {
+    console.log(red("process terminated"));
+    process.exit(1);
   }
 
-  process.exit(1);
+  for (let tx_obj of transactions_array) {
+    const tx = await signTransaction({
+      pk_n: (await loadAccount()).pk,
+      transaction_object: tx_obj,
+    });
+    console.log(`---> archived successfully:\n`);
+    console.log(`\t\t\tarticle ID: ${green(tx.article_wpaid)}`);
+    console.log(`\t\t\tarticle slug: ${green(tx.article_slug)}`);
+    console.log(`\t\t\tarchive TXID: ${green(tx.txid)}\n\n`);
+  }
 }
+
 
 export async function loadContractState() {
   if (!(await isSignedIn())) {
