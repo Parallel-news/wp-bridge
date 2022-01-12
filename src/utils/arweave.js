@@ -94,12 +94,54 @@ export async function addArticle({ data, contract_id, pk_n } = {}) {
     tx.addTag("Protocol-Action", "Add-Archive");
     tx.addTag("Content-Type", "application/json");
 
-    await arweave.transactions.sign(tx, pk_n);
-    await arweave.transactions.post(tx);
-
-    return tx.id;
+    return tx;
   } catch (error) {
     console.log(red(`ERROR: ${error.name} : ${error.description}`));
     process.exit(0);
+  }
+}
+
+async function calculateTotalTransactionSize(transactions_array) {
+  // tx.reward is a string
+  const sizes = transactions_array.map(tx => +(tx.tx_object.reward));
+  const totalSize = sizes.reduce((a,b) => a + b, 0);
+
+  return totalSize;
+};
+
+export async function balanceDiffsAfterArchiving({address, transactions_array} = {}) {
+
+  const stats = {
+    can_archive: false,
+    balance_before: 0,
+    balance_after: 0
+  }
+
+  const totalArchiveSize = await calculateTotalTransactionSize(transactions_array);
+  const addressBalance = +(await arweave.wallets.getBalance(address));
+  const diff = addressBalance - totalArchiveSize;
+
+  if (diff <= 0) {
+    return stats;
+  }
+
+  stats.can_archive = true;
+  stats.balance_before = addressBalance * 1e-12;
+  stats.balance_after = diff * 1e-12;
+
+  return stats;
+
+}
+
+export async function signTransaction({pk_n, transaction_object} = {}) {
+  const tx = transaction_object.tx_object;
+
+  await arweave.transactions.sign(tx, pk_n);
+  await arweave.transactions.post(tx);
+
+  return {
+    txid: tx.id,
+    article_slug: transaction_object.tx_metadata.slug,
+    article_wpaid: transaction_object.tx_metadata.wpaid
   }
 }
