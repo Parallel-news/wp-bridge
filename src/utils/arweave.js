@@ -97,7 +97,7 @@ export async function addArticle({ data, contract_id, pk_n } = {}) {
     return tx;
   } catch (error) {
     console.log(red(`ERROR: ${error.name} : ${error.description}`));
-    process.exit(0);
+    process.exit(1);
   }
 }
 
