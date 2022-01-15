@@ -41,21 +41,21 @@ export async function signup(argv) {
 
   if (await hasRegistered()) {
     console.log(red("ERROR: profile already created, please sign-in"));
-    process.exit(0);
+    process.exit(1);
   }
 
   if (!checkFileExtension(keyFile, "json")) {
     console.log(
       red("ERROR: a non-JSON file path has been seeded, please check again")
     );
-    process.exit(0);
+    process.exit(1);
   }
 
   const keyfile = fs.readFileSync(keyFile, "utf8");
 
   if (!isParsable(keyfile)) {
     console.log(red(`ERROR: unable to parse ${red(keyFile)}`));
-    process.exit(0);
+    process.exit(1);
   }
 
   const pk = JSON.parse(keyfile);
@@ -79,7 +79,7 @@ export async function signup(argv) {
   await setConfig("address", { address });
   await setConfig("status", { status: "signed-in" });
 
-  process.exit(1);
+  process.exit(0);
 }
 
 export async function getProfile() {
@@ -114,7 +114,7 @@ export async function getProfile() {
       `deployed-contract: ${green(contract)}`
   );
 
-  process.exit(1);
+  process.exit(0);
 }
 
 export async function setup(argv) {
@@ -158,7 +158,7 @@ export async function setup(argv) {
   console.log("contract deployed successfully!");
   console.log(`contract-id: ${green(transaction)}`);
 
-  process.exit(1);
+  process.exit(0);
 }
 
 export async function fetchContent(argv) {
@@ -243,7 +243,7 @@ export async function fetchContent(argv) {
     console.log(
       red("unsufficient wallet balance, please top-up AR in tour wallet")
     );
-    process.exit(0);
+    process.exit(1);
   }
   const balance_before = archiveStats["balance_before"];
   const balance_after = archiveStats["balance_after"];
@@ -277,6 +277,7 @@ export async function fetchContent(argv) {
     console.log(`\t\t\tarticle slug: ${green(tx.article_slug)}`);
     console.log(`\t\t\tarchive TXID: ${green(tx.txid)}\n\n`);
   }
+  process.exit(0);
 }
 
 
@@ -301,7 +302,7 @@ export async function loadContractState() {
 export async function signOut() {
   if (!(await isSignedIn())) {
     console.log(red("ERROR: no signed-in session detected."));
-    process.exit(0);
+    process.exit(1);
   }
 
   const inquiry = await inquirer.prompt([
@@ -341,14 +342,14 @@ export async function signIn(argv) {
     console.log(
       red("ERROR: a non-JSON file path has been seeded, please check again")
     );
-    process.exit(0);
+    process.exit(1);
   }
 
   const keyfile = fs.readFileSync(keyFile, "utf8");
 
   if (!isParsable(keyfile)) {
     console.log(red(`ERROR: unable to parse ${red(keyFile)}`));
-    process.exit(0);
+    process.exit(1);
   }
 
   const pk = JSON.parse(keyfile);
@@ -360,7 +361,7 @@ export async function signIn(argv) {
     console.log(
       red(`ERROR: the given keyfile is not the pk of ${stored_address}`)
     );
-    process.exit(0);
+    process.exit(1);
   }
 
   await setConfig("keyfile", { pk });
@@ -369,5 +370,5 @@ export async function signIn(argv) {
     `welcome back\n` +
       `signed-in as ${green(`${new_address} (${wallet_name})`)}`
   );
-  process.exit(1);
+  process.exit(0);
 }
