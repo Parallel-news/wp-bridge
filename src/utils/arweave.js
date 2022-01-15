@@ -24,7 +24,7 @@ export async function loadWallet(keyfile) {
     return address;
   } catch (error) {
     log.error(red("unable to load an Arweave wallet from the given keyfile"));
-    process.exit(0);
+    process.exit(1);
   }
 }
 
@@ -67,7 +67,7 @@ export async function deployContract({
         "ERROR: something went wrong while deploying the registry contract, please try again :("
       )
     );
-    process.exit(0);
+    process.exit(1);
   }
 }
 
