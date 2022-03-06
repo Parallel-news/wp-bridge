@@ -1,61 +1,79 @@
-# WP-Bridge
-Bridging content from WordPress to Arweave network
+```console
+
+                             __      __  ____           ____                   __                    
+                            /\ \  __/\ \/\  _`\        /\  _`\          __    /\ \                   
+                            \ \ \/\ \ \ \ \ \L\ \      \ \ \L\ \  _ __ /\_\   \_\ \     __      __   
+                             \ \ \ \ \ \ \ \ ,__/_______\ \  _ <'/\`'__\/\ \  /'_` \  /'_ `\  /'__`\ 
+                              \ \ \_/ \_\ \ \ \//\______\\ \ \L\ \ \ \/ \ \ \/\ \L\ \/\ \L\ \/\  __/ 
+                               \ `\___x___/\ \_\\/______/ \ \____/\ \_\  \ \_\ \___,_\ \____ \ \____\
+                                '\/__//__/  \/_/           \/___/  \/_/   \/_/\/__,_ /\/___L\ \/____/
+                                                                                        /\____/      
+                                                                                        \_/__/       
+                                         
+                                         
+                                       ~Bridging content from WordPress to Arweave network~
+
+```
 
 
-# Synopsis
+## Synopsis
 the `wp-bridge` allow for WordPress users to archive their blog's database permanently on Arweave without worrying about continious storage costs, data loss, and censorship.
 
-# Install
-```bash
+## Install
+```sh
 npm install -g wp-bridge
 ```
 
-# Examples
+## Examples
 
-## create a profile & sign in
+### create a profile & sign in
 
-```bash
+```sh
 wp-bridge sign-up --key-file PATH-TO-YOUR-WALLET.json --wallet-name NAME-LABEL
 ```
 
-## deploy registry contract
+### deploy registry contract
 
-```bash
+```sh
 wp-bridge deploy-contract --blog-name ExampleBlog --blog-url https://your-wp-blog.net
 ```
 
-## check profile
+### check your profile
 
-```bash
+```sh
 wp-bridge profile
 ```
 
-## fetch content and archive diffs
+### check if a domain is using Wordpress
 
-```bash
+```sh
+wp-bridge is-wordpress --domain DomainNameAndTLD
+```
+
+### fetch content and archive diffs
+
+```sh
 wp-bridge fetch-content
 ```
-#### option:
-- --dry-run : simulate fetching without uploading to Arweave
 
-## load registry-contract state
+### load registry-contract state
 
-```bash
+```sh
 wp-bridge read-registry
 
 ```
 
-## signing out
+### signing out
 
-```bash
+```sh
 wp-bridge sign-out
 ```
 
-## signing in
+### signing in
 
-```bash
+```sh
 wp-bridge sign-in --key-file PATH-TO-YOUR-WALLET.json
 ```
 
-# License
-This project is licensed under the MIT license
+## License
+This project is licensed under the [MIT license](./LICENSE)
