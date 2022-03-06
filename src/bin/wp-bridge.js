@@ -12,6 +12,7 @@ import {
   setup,
   fetchContent,
   loadContractState,
+  checkWebsiteCompatibility,
 } from "./handlers.js";
 
 const argvs = yargs(hideBin(process.argv))
@@ -45,7 +46,7 @@ const argvs = yargs(hideBin(process.argv))
   })
   .command({
     command: "profile",
-    aliases: ["p"],
+    aliases: ["whoami"],
     handler: async (argv) => {
       await initer();
       const balance = await getProfile();
@@ -115,6 +116,20 @@ const argvs = yargs(hideBin(process.argv))
     handler: async (argv) => {
       await initer();
       await signIn(argv);
+    },
+  })
+  .command({
+    command: "is-wordpress [domain]",
+    builder: (yargs) => {
+      yargs.options({
+        "domain": {
+          describe: "domain name. E.g. arweave.news",
+          demandOption: true,
+        },
+      });
+    },
+    handler: async (argv) => {
+      await checkWebsiteCompatibility(argv.domain);
     },
   })
   .help().argv;
