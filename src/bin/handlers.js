@@ -13,7 +13,7 @@ import {
   signTransaction,
   balanceDiffsAfterArchiving,
 } from "../utils/arweave.js";
-import { checkFileExtension, isParsable } from "../utils/types-checking.js";
+import { checkFileExtension, isParsable, isWordpress } from "../utils/types-checking.js";
 import {
   setConfig,
   hasConfig,
@@ -46,7 +46,7 @@ export async function signup(argv) {
 
   if (!checkFileExtension(keyFile, "json")) {
     console.log(
-      red("ERROR: a non-JSON file path has been seeded, please check again")
+      red("ERROR: a non-JSON file path has been provided, please check again")
     );
     process.exit(1);
   }
@@ -121,7 +121,7 @@ export async function setup(argv) {
   const blog_name = argv.blogName;
   const blog_url = argv.blogUrl;
 
-  spinner("attemt to deploy a blogs registry contract").start();
+  spinner("attempt to deploy a blogs registry contract").start();
 
   if (!(await isSignedIn())) {
     console.log(red("ERROR: please signin to create the registry contract"));
@@ -241,7 +241,7 @@ export async function fetchContent(argv) {
 
   if (!archiveStats.can_archive) {
     console.log(
-      red("unsufficient wallet balance, please top-up AR in tour wallet")
+      red("unsufficient wallet balance, please top-up AR in your wallet")
     );
     process.exit(1);
   }
@@ -371,4 +371,20 @@ export async function signIn(argv) {
       `signed-in as ${green(`${new_address} (${wallet_name})`)}`
   );
   process.exit(0);
+}
+
+export async function checkWebsiteCompatibility(domain) {
+  try {
+    const status = await isWordpress(domain);
+
+    if (status) {
+      console.log(green(`${domain} is wordpress compatible!`));
+      process.exit(0);
+    }
+
+    console.log(red(`${domain} is not wordpress compatible!`));
+  } catch (error) {
+    console.log(red("ERROR: something wrong happend"));
+    process.exit(1);
+  }
 }
